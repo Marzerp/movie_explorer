@@ -1,5 +1,7 @@
 #Extraer las reviews
 
+api_key = "https://www.themoviedb.org/documentation/api"
+
 #Diccionario con los generos y ids de las peliculas
 genres_url = f'https://api.themoviedb.org/3/genre/movie/list?api_key={api_key}&language=es-MX'
 genres_response = requests.get(genres_url)
