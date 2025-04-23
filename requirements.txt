@@ -1,4 +1,6 @@
 requests
 pandas
+nltk
+transformers
 scikit-learn 
 
