@@ -1,26 +1,8 @@
-// Conectarse a la base de datos definida por la variable DATABASE
-db = db.getSiblingDB("MoviesDatabase");
+// Crear DB y usuarios personalizados
+db = db.getSiblingDB('moviesdb');
 
-// Crear usuario con permisos de escritura
 db.createUser({
-  user: "writer",
-  pwd: "writerpass",
-  roles: [
-    {
-      role: "readWrite",
-      db: "MoviesDatabase"
-    }
-  ]
-});
-
-// Crear usuario con permisos de solo lectura
-db.createUser({
-  user: "reader",
-  pwd: "readerpass",
-  roles: [
-    {
-      role: "read",
-      db: "MoviesDatabase"
-    }
-  ]
+  user: 'usuario_app',
+  pwd: 'contraseña_segura',
+  roles: [{ role: 'readWrite', db: 'moviesdb' }]
 });

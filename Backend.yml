@@ -1,33 +1,20 @@
-version: '3.8'
-
 services:
-  MoviesDatabase:
-    image: mongo:7.0.
-    container_name: mongo_db
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb_container
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-
-      DATABASE: ${DB_NAME}
-      MONGO_WRITE_USERNAME: ${MONGO_WRITE_USERNAME}
-      MONGO_WRITE_PASSWORD: ${MONGO_WRITE_PASSWORD}
-      MONGO_READ_USERNAME: ${MONGO_READ_USERNAME}
-      MONGO_READ_PASSWORD: ${MONGO_READ_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-admin123}
     volumes:
-      - ./MoviesDatabase/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      - ./MoviesDatabase/data:/data/db
-    networks:
-      - movie_app_internal
+      - mongodb_data:/data/db  # Persistencia de datos
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro  # Script de inicialización
     ports:
-      - "27017:27017"
+      - "27017:27017"  # Puerto host:contenedor
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 2s
-      timeout: 2s
-      retries: 10
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
-networks:
-  movie_app_internal:
-    driver: bridge
-
-
+volumes:
+  mongodb_data:  # Volumen para persistir datos
