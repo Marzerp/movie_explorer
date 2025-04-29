@@ -2,11 +2,8 @@ requests
 pandas
 nltk
 transformers
-<<<<<<< HEAD
-=======
 pymongo
 os
-dotenv
->>>>>>> f7e3f39 (Update requirements)
-scikit-learn 
+python-dotenv
+tqdm 
 
