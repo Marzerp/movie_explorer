@@ -8,4 +8,4 @@ COPY ./mongo-init.js /docker-entrypoint-initdb.d/
 EXPOSE 27017
 
 # Comando por defecto (inicia MongoDB)
-CMD ["mongod", "--bind_ip_all"]  # Permite conexiones externas
+CMD ["mongod", "--bind_ip_all", "--auth"]  # Permite conexiones externas

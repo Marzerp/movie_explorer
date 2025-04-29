@@ -1,8 +1,9 @@
 // Crear DB y usuarios personalizados
-db = db.getSiblingDB('moviesdb');
+db = db.getSiblingDB(process.env.MONGO_APP_DB);
 
 db.createUser({
-  user: 'usuario_app',
-  pwd: 'contraseña_segura',
-  roles: [{ role: 'readWrite', db: 'moviesdb' }]
+  user: process.env.MONGO_APP_USER,
+  pwd: process.env.MONGO_APP_PASSWORD,
+  roles: [{ role: 'readWrite', db: process.env.MONGO_APP_DB},
+          { role: 'dbAdmin', db: process.env.MONGO_APP_DB}, ]
 });
