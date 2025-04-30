@@ -82,9 +82,7 @@ def get_reviews():
 
   return all_reviews 
 
-ClientDatabase = MongoClient("mongodb://{MONGO_ROOT_USERNAME}:{MONGO_ROOT_PASSWORD}@BooksDatabase:27017/{DB_NAME}")
-BooksDB = ClientDatabase["{DB_NAME}"]
-BooksCollection = BooksDB.BooksCollection
+getreviews()
 
 def save_reviews(review):
-  BooksCollection.insert_one(review)
+  reviews_collection.insert_one(review)
