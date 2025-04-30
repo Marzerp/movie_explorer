@@ -8,9 +8,9 @@ load_dotenv()
 client= MongoClient(
 	f"mongodb://{os.getenv('MONGO_ROOT_USER')}:{os.getenv('MONGO_ROOT_PASSWORD')}" 
  	f"@{os.getenv('MONGO_HOST', 'localhost')}:27017/"
- 	f"{os.getenv('DB_NAME', 'moviesdb')}
+ 	f"{os.getenv('MONGO_APP_DB', 'moviesdb')}
 
-db = client[os.getenv("DB_NAME", "moviesdb")]
+db = client[os.getenv("MONGO_APP_DB", "moviesdb")]
 reviews_collection = db.reviews
 
 
