@@ -3,7 +3,6 @@ pandas
 nltk
 transformers
 pymongo
-os
 python-dotenv
 tqdm 
 
