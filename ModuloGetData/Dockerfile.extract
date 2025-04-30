@@ -12,4 +12,4 @@ COPY ModuloGetData/mongo_client.py .
 COPY ModuloGetData/GetReviews.py .
 
 # Comando para ejecutar el extractor
-CMD ["python", "GetReviews.py"]
+CMD ["python", "__main__.py"]
