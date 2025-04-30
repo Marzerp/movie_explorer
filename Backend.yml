@@ -20,5 +20,27 @@ services:
       timeout: 5s
       retries: 5
 
+data_extractor:
+    build:
+      context: .
+      dockerfile: Dockerfile.extractor
+    container_name: data_extractor
+    environment:
+      MONGO_ROOT_USER: ${MONGO_ROOT_USER}
+      MONGO_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_HOST: ${MONGO_HOST}
+      MONGO_PORT: ${MONGO_PORT}
+      MONGO_APP_DB: ${MONGO_APP_DB}
+      MONGO_APP_USER: ${MONGO_APP_USER}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
+    depends_on:
+      mongo_db:
+        condition: service_healthy
+    networks:
+      - movie_network
+    # Opcional: descomentar para ejecutar solo una vez
+    # restart: "no"
+
+
 volumes:
   mongodb_data:  # Volumen para persistir datos
