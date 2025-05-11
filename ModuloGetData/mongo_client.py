@@ -1,6 +1,10 @@
 from pymongo import MongoClient
 import os
 
+print("*** Inicio mongo-client ***")
+
+load_dotenv()
+
 def get_mongo_client():
     username = os.getenv("MONGO_ROOT_USER")
     password = os.getenv("MONGO_ROOT_PASSWORD")
@@ -10,3 +14,5 @@ def get_mongo_client():
 
     client = MongoClient(f"mongodb://{username}:{password}@{host}:{port}/{db_name}")
     return client[db_name]
+print("*** FIN mongo-client ***")
+
