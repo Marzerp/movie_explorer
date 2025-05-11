@@ -1,29 +1,26 @@
-
 services:
   mongodb:
     image: mongo:7.0
-    container_name: mongodb_container
+    container_name: mongodb
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       MONGO_APP_DB: ${MONGO_APP_DB}
-      MONGO_APP_USER: ${MONGO_APP_USER}
-      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
     volumes:
       - mongodb_data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     ports:
       - "27017:27017"
     healthcheck:
-     # test: ["CMD", "mongosh", "-u", "${MONGO_ROOT_USER}", "-p", "${MONGO_ROOT_PASSWORD}", "--eval", "db.adminCommand('ping')"]
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "-u", "admin", "-p", "admin123"]
       interval: 10s
-      timeout: 20s
+      timeout: 5s
       retries: 5
-      start_period: 30s
+    networks:
+      - movie_network
 
-  data_extractor:  # ⬅️ Este debe estar al MISMO nivel que mongodb, no dentro de él
+  data_extractor:  
     build:
       context: .
       dockerfile: ModuloGetData/Dockerfile.extract
@@ -34,8 +31,6 @@ services:
       MONGO_HOST: ${MONGO_HOST}
       MONGO_PORT: ${MONGO_PORT}
       MONGO_APP_DB: ${MONGO_APP_DB}
-      MONGO_APP_USER: ${MONGO_APP_USER}
-      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD}
     depends_on:
       mongodb:
         condition: service_healthy

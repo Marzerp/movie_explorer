@@ -15,12 +15,12 @@ reviews_collection = db.reviews
 
 
 
-def insert_reviews():
-    '''Insert movie and their corresponding emotion 
-       into a MongoDB collection'''
-    for review in get_reviews():
-    	reviews_collection.insert_one(review)
-    client.close()
+#def insert_reviews():
+#    '''Insert movie and their corresponding emotion 
+#       into a MongoDB collection'''
+#    for review in get_reviews():
+#    	reviews_collection.insert_one(review)
+#    client.close()
     
 
 

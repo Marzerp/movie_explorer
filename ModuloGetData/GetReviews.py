@@ -1,13 +1,52 @@
 import requests
+import os
+from dotenv import load_dotenv
 from pymongo import MongoClient
+from Preprocessing import clean_review , classify_emotion
 
-from .Preprocessing import clean_review , classify_emotion
+print("*** INICIO GetReviews ***")
+
+load_dotenv()
+
+#client = MongoClient( "mongodb://admin:admin123@mongodb:27017/",authSource="admin")
+
+#client = MongoClient(
+#    f"mongodb://{os.getenv('MONGO_ROOT_USER', 'admin')}:{os.getenv('MONGO_ROOT_PASSWORD', 'admin123')}"
+#    f"@{os.getenv('MONGO_HOST', 'mongodb')}:27017/"
+#    f"?authSource=admin"
+#    f"&connectTimeoutMS=50000",
+#    serverSelectionTimeoutMS=50000
+#)
+
+#client = MongoClient(
+#    f"mongodb://{os.getenv('MONGO_ROOT_USER')}:{os.getenv('MONGO_ROOT_PASSWORD')}"
+#    f"@{os.getenv('MONGO_HOST', 'mongodb')}:27017/"
+#    f"{os.getenv('MONGO_APP_DB', 'moviesdb')}"
+#    f"?authSource=admin"
+#    f"&connectTimeoutMS=50000",
+#    serverSelectionTimeoutMS=50000
+#)
+
+client = MongoClient(
+    "mongodb://appuser:apppassword@mongodb:27017/moviesdb?authSource=moviesdb"
+)
+
+print("client = MongoClient() ... ", client)
+
+db = client[os.getenv("MONGO_APP_DB", "moviesdb")]
+
+print("db = client[] ... ", db)
+
+reviews_collection = db.reviews
+
+print("reviews_collection = db.reviews ", reviews_collection)
+
 
 all_reviews = []
 def get_reviews():
     #Extraer las reviews
 
-  api_key = "https://www.themoviedb.org/documentation/api"
+  api_key = "56b60ff56fdd97adb04d9d3b962c8f75"
 
   #Diccionario con los generos y ids de las peliculas
   genres_url = f'https://api.themoviedb.org/3/genre/movie/list?api_key={api_key}&language=es-MX'
@@ -82,7 +121,16 @@ def get_reviews():
 
   return all_reviews 
 
-getreviews()
 
 def save_reviews(review):
+  print("*** review: ", review)
   reviews_collection.insert_one(review)
+   
+get_reviews()
+
+print("*** después de get_reviews() ***")
+
+client.close()
+
+print("*** FIN GetReviews ***")
+
