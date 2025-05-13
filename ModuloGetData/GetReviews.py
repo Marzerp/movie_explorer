@@ -4,48 +4,29 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 from Preprocessing import clean_review , classify_emotion
 
-print("*** INICIO GetReviews ***")
-
 load_dotenv()
 
-#client = MongoClient( "mongodb://admin:admin123@mongodb:27017/",authSource="admin")
+username = os.getenv("MONGO_ROOT_USER")
+password = os.getenv("MONGO_ROOT_PASSWORD")
+db_name = os.getenv("MONGO_APP_DB")
+host = os.getenv("MONGO_HOST")
+port = os.getenv("MONGO_PORT", "27017")
+
+client = MongoClient(f"mongodb://{username}:{password}@{host}:{port}/{db_name}?authSource={db_name}")
+
 
 #client = MongoClient(
-#    f"mongodb://{os.getenv('MONGO_ROOT_USER', 'admin')}:{os.getenv('MONGO_ROOT_PASSWORD', 'admin123')}"
-#    f"@{os.getenv('MONGO_HOST', 'mongodb')}:27017/"
-#    f"?authSource=admin"
-#    f"&connectTimeoutMS=50000",
-#    serverSelectionTimeoutMS=50000
+#    "mongodb://appuser:apppassword@mongodb:27017/moviesdb?authSource=moviesdb"
 #)
 
-#client = MongoClient(
-#    f"mongodb://{os.getenv('MONGO_ROOT_USER')}:{os.getenv('MONGO_ROOT_PASSWORD')}"
-#    f"@{os.getenv('MONGO_HOST', 'mongodb')}:27017/"
-#    f"{os.getenv('MONGO_APP_DB', 'moviesdb')}"
-#    f"?authSource=admin"
-#    f"&connectTimeoutMS=50000",
-#    serverSelectionTimeoutMS=50000
-#)
-
-client = MongoClient(
-    "mongodb://appuser:apppassword@mongodb:27017/moviesdb?authSource=moviesdb"
-)
-
-print("client = MongoClient() ... ", client)
 
 db = client[os.getenv("MONGO_APP_DB", "moviesdb")]
-
-print("db = client[] ... ", db)
-
 reviews_collection = db.reviews
-
-print("reviews_collection = db.reviews ", reviews_collection)
 
 
 all_reviews = []
 def get_reviews():
-    #Extraer las reviews
-
+  #Extraer las reviews
   api_key = os.getenv('API_KEY')
   print("***  api_key=",api_key)
 
@@ -76,10 +57,9 @@ def get_reviews():
 
       #Verificamos que la solicitud fue exitosa
       if response.status_code == 200:
-          # Lo convertimos a un formato JSON
+          # Convertimos a un formato JSON
           movies = response.json()["results"]
-          #Extraemos  titulo, genero, fecha de estreno y otros metadatos y 
-          # agregamos a un diccionario el movie_id
+          #Extraemos  titulo, genero, fecha de estreno, otros metadatos y agregamos a un diccionario el movie_id
           for movie in movies:  
             movie_id = movie['id']
             title = movie.get('title', 'Sin título')
@@ -124,12 +104,10 @@ def get_reviews():
 
 
 def save_reviews(review):
-  print("*** review: ", review)
   reviews_collection.insert_one(review)
-   
+  print("Insertando en moviesdb: ", review)
 get_reviews()
 
-print("*** después de get_reviews() ***")
 
 client.close()
 
