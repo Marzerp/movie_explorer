@@ -6,8 +6,8 @@ from Preprocessing import clean_review , classify_emotion
 
 load_dotenv()
 
-username = os.getenv("MONGO_ROOT_USER")
-password = os.getenv("MONGO_ROOT_PASSWORD")
+username = os.getenv("MONGO_APP_USER")
+password = os.getenv("MONGO_APP_PASSWORD")
 db_name = os.getenv("MONGO_APP_DB")
 host = os.getenv("MONGO_HOST")
 port = os.getenv("MONGO_PORT", "27017")
