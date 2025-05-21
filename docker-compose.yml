@@ -20,22 +20,51 @@ services:
     networks:
       - movie_network
 
-  data_extractor:  
-    build:
-      context: .
-      dockerfile: ModuloGetData/Dockerfile.extract
-    container_name: data_extractor
+#  data_extractor:  
+#    build:
+#      context: .
+#      dockerfile: ModuloGetData/Dockerfile.extract
+#    container_name: data_extractor
+#    environment:
+#      MONGO_ROOT_USER: ${MONGO_ROOT_USER}
+#      MONGO_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+#      MONGO_HOST: ${MONGO_HOST}
+#      MONGO_PORT: ${MONGO_PORT}
+#      MONGO_APP_DB: ${MONGO_APP_DB}
+#    depends_on:
+#      mongodb:
+#        condition: service_healthy
+#    networks:
+#      - movie_network
+      
+  app:
+    build: ./web/app
+    env_file: .env
     environment:
       MONGO_ROOT_USER: ${MONGO_ROOT_USER}
       MONGO_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       MONGO_HOST: ${MONGO_HOST}
       MONGO_PORT: ${MONGO_PORT}
       MONGO_APP_DB: ${MONGO_APP_DB}
+    ports:
+      - "8080:8080"  # Solo expuesto internamente
+    volumes:
+      - ./output:/output
     depends_on:
-      mongodb:
-        condition: service_healthy
+      - mongodb
     networks:
       - movie_network
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./web/html:/usr/share/nginx/html
+      - ./output:/output
+      - ./web/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
 
 volumes:
   mongodb_data:
