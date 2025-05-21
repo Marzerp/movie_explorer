@@ -38,12 +38,14 @@ def home():
     <html>
     <body>
     """
-    html += f"<h1>Peliculas en la BD: {n}</h1>"
+    html += f"<h1>Movie Explorer (total movies: {n})</h1>"
     html += """
         <form action="/generar_reporte" method="get">
-            <label for="edad">Filtrar por edad:</label>
-            <input type="number" id="edad" name="edad" placeholder="Por ejemplo: 40">
-            <button type="submit">Generar Reporte</button>
+            <label for="year">Release year:</label>
+            <input type="number" id="year" name="year" placeholder="2025">
+            <label for="numPage">Number of movies to display:</label>
+            <input type="number" id="numPage" name="numPage" placeholder="10">
+            <button type="submit">Search</button>
         </form>
     </body>
     </html>
@@ -54,32 +56,36 @@ def home():
 def generar_reporte():
     print("=== INICIO GENERAR_REPORTE ===", flush=True)
     
-    # Obtener parámetro de edad (si existe)
-    edad_filtro = request.args.get('edad')
+    # Obtener parámetros
+    year_arg = request.args.get('year')
+    numPage_arg = request.args.get('numPage')
+    
+    # Establecer valores por defecto
+    numPage = int(numPage_arg) if numPage_arg else 10
+    year = int(year_arg) if year_arg else None
     
     try:
-        db = client["empresa"]
+        # Construir query basado en el año si se especificó
+        query = {"release_date": {"$regex": f"^{year}"}} if year else {}
         
-        # Construir query basado en si hay filtro de edad
-#        query = {} if not edad_filtro else {"edad": int(edad_filtro)}
-        query = {}        
-        empleados = list(db["empleados"].find(query))
-        print(f"Empleados encontrados: {len(empleados)}", flush=True)
+        # Obtener las películas y convertirlas a lista (limitando a numPage)
+        movies = list(reviews_collection.find(query).limit(numPage))
+        
+        print(f"Number of movies found: {len(movies)}", flush=True)
         
         html = """
             <html>
             <body>
-            <h1>Reporte de Peliculas</h1>
+            <h1>Search Results:</h1>
             """
         
-        if edad_filtro:
-            html += f"<h2>Filtrado por edad: {edad_filtro} años</h2>"
+        if year:
+            html += f"<h2>Release year: {year}</h2>"
         
-        html += """
-            <ul>
-            """
-        for emp in empleados:
-            html += f"<li>{emp['nombre']} - {emp['edad']} años</li>"
+        html += "<ul>"
+        
+        for movie in movies:
+            html += f"<li>{movie['title']} - {movie['release_date']} - emotion:{movie['emotion']} </li>"
         
         html += """
             </ul>
