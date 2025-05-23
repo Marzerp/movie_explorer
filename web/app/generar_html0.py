@@ -125,6 +125,7 @@ def generar_reporte():
     neutral_arg = request.args.get('neutral')
     fear_arg = request.args.get('fear')
     
+    # Establecer valores por defecto
     numPage = int(numPage_arg) if numPage_arg else 30
     year = int(year_arg) if year_arg else None
     fullInfo = True if fullInfo_arg=="true" else False
@@ -146,18 +147,29 @@ def generar_reporte():
       active_emotions.append("fear")
      
     try:
-        query = {}
-        if year:
-           query["release_date"] = {"$regex": f"^{year}"}  
+        # Construir query basado en el año si se especificó
+        query_year = {"release_date": {"$regex": f"^{year}"}} if year else {}
+        query_keyWord = {"title": {"$regex": f"{keyWord}"}} if keyWord else {}
+        query_emotions = {}
+        if active_emotions:  # Solo aplica el filtro si hay emociones seleccionadas
+          query_emotions["emotion.label"] = {"$in": active_emotions}  # "$in" busca coincidencias en una lista
+    
+        # Obtener las películas y convertirlas a lista (limitando a numPage)
         if keyWord:
-            query["title"] = {"$regex": keyWord, "$options": "i"} 
-        if active_emotions:
-            query["emotion.label"] = {"$in": active_emotions}
-   
-        if fullInfo:
-            movies = list(reviews_collection.find(query).limit(numPage))
+          if fullInfo:
+            movies = list(reviews_collection.find(query_keyWord).limit(numPage))
+          else:
+            movies = title_unique(query_keyWord)
         else:
-            movies = title_unique(query)
+          if fullInfo:
+            movies = list(reviews_collection.find(query_year).limit(numPage))
+          else :
+            movies = title_unique(query_year)
+        if active_emotions:
+          if fullInfo:
+            movies = list(reviews_collection.find(query_emotions).limit(numPage))
+          else:
+            movies = title_unique(query_emotions)
 
         print(f"Number of movies found: {len(movies)}", flush=True)
         
