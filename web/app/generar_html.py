@@ -2,6 +2,8 @@ from pymongo import MongoClient
 from flask import Flask, render_template_string, redirect, url_for, request
 import os
 import sys
+import json			 #para exportar la BD 
+from bson.json_util import dumps
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
@@ -31,6 +33,17 @@ db = client[os.getenv("MONGO_APP_DB", "moviesdb")]
 reviews_collection = db.reviews
 n = reviews_collection.count_documents({})
 print(f"Total documentos: {n}", flush=True)
+
+# Exportar todos los documentos a un archivo JSON
+#def export_to_json(collection, filename):
+#    cursor = collection.find({})
+#    with open(filename, 'w') as file:
+#        for document in cursor:
+#            file.write(dumps(document) + '\n')
+
+# Ejecutar la exportación
+#export_to_json(reviews_collection, 'moviesdb_backup.json')
+#print("Exportación completada. Datos guardados en moviesdb_backup.json")
 
 @app.route('/')
 def home():
