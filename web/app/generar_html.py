@@ -2,12 +2,18 @@ from pymongo import MongoClient
 from flask import Flask, render_template_string, redirect, url_for, request
 import os
 import sys
+<<<<<<< HEAD
 
+=======
+>>>>>>> e68191e (MOV-20 save poster link and modify GetReviews.py to save more movies)
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
 sys.stdout.reconfigure(line_buffering=True)  
+<<<<<<< HEAD
 
+=======
+>>>>>>> e68191e (MOV-20 save poster link and modify GetReviews.py to save more movies)
 app = Flask(__name__)
 
 
@@ -32,7 +38,11 @@ def home():
     <html>
     <body>
     """
+<<<<<<< HEAD
     html += f"<h1>Movie Explorer </h1>"
+=======
+    html += f"<h1>Movie Explorer</h1>"
+>>>>>>> e68191e (MOV-20 save poster link and modify GetReviews.py to save more movies)
     html += """
         <form action="/generar_reporte" method="get">
         
@@ -43,7 +53,7 @@ def home():
             <input type="search" id="keyWord" name="keyWord" placeholder="Enter a key word"><br>
                      
             <label for="numPage">Number of movies to display:</label>
-            <input type="number" id="numPage" name="numPage" placeholder="30"><br>
+            <input type="number" id="numPage" name="numPage" placeholder="10"><br>
             
             <p> Search by Emotions:
             <label for="joy">
@@ -69,6 +79,7 @@ def home():
             </label><br>
             </p>
             
+<<<<<<< HEAD
             <p>
             <label for="genre">Filter by Genre:</label>
             <select id="genre" name="genre">
@@ -93,10 +104,35 @@ def home():
                 <option value="Ciencia ficción">SciFi</option>
             </select><br>
             </p>
+=======
+            <!-- Menú desplegable de géneros -->
+            <label for="genre">Filter by Genre:</label>
+            <select id="genre" name="genre">
+                <option value="">All Genres</option>
+                <option value="Crimen">Crimen</option>
+                <option value="Historia">Historia</option>
+                <option value="Familia">Familia</option>
+                <option value="Acción">Acción</option>
+                <option value="Drama">Drama</option>
+                <option value="Película de TV">Película de TV</option>
+                <option value="Misterio">Misterio</option>
+                <option value="Suspense">Suspense</option>
+                <option value="Comedia">Comedia</option>
+                <option value="Bélica">Bélica</option>
+                <option value="Música">Música</option>
+                <option value="Western">Western</option>
+                <option value="Animación">Animación</option>
+                <option value="Romance">Romance</option>
+                <option value="Aventura">Aventura</option>
+                <option value="Fantasía">Fantasía</option>
+                <option value="Terror">Terror</option>
+                <option value="Ciencia ficción">Ciencia ficción</option>
+            </select><br>
+>>>>>>> e68191e (MOV-20 save poster link and modify GetReviews.py to save more movies)
             
             <!-- Checkbox para información completa -->
-    	    <label for="fullInfo">
-              <input type="checkbox" id="fullInfo" name="fullInfo" value="true"> Display Emotion Info
+            <label for="fullInfo">
+              <input type="checkbox" id="fullInfo" name="fullInfo" value="true"> Display Full Info
             </label><br>
     
             <button type="submit">Search</button>
@@ -116,6 +152,7 @@ def generar_reporte():
       # Agrupar por título y tomar el primer registro (o el más reciente)
       {"$group": {
           "_id": "$title",  # Agrupa por título
+          "poster_url": {"$first": "$poster_url"}, 
           "release_date": {"$first": "$release_date"},  # Toma la primera fecha
           "emotion": {"$first": "$emotion"}  # Toma el primer resultado de emoción
                                              # (O usa `$last` si quieres el más reciente)
@@ -146,7 +183,9 @@ def generar_reporte():
 
     genre_arg = request.args.get('genre')
     
-    numPage = int(numPage_arg) if numPage_arg else 30
+    genre_arg = request.args.get('genre')
+    
+    numPage = int(numPage_arg) if numPage_arg else 10
     year = int(year_arg) if year_arg else None
     fullInfo = True if fullInfo_arg=="true" else False
     
@@ -165,6 +204,9 @@ def generar_reporte():
       active_emotions.append("neutral")
     if fear_arg=="true":
       active_emotions.append("fear")
+
+    n = reviews_collection.count_documents({})
+    print(f"Total documentos: {n}", flush=True)
      
     n = reviews_collection.count_documents({})
     try:
@@ -175,14 +217,24 @@ def generar_reporte():
             query["title"] = {"$regex": keyWord, "$options": "i"} 
         if active_emotions:
             query["emotion.label"] = {"$in": active_emotions}
+<<<<<<< HEAD
        
         if genre_arg != "":
             query["genre_names"] = {"$regex": f"\\b{genre_arg}\\b", "$options": "i"}
       
+=======
+        if genre_arg != "":
+            query["genre_names"] = {"$regex": f"\\b{genre_arg}\\b", "$options": "i"}
+   
+>>>>>>> e68191e (MOV-20 save poster link and modify GetReviews.py to save more movies)
         if fullInfo:
             movies = list(reviews_collection.find(query).limit(numPage))
         else:
             movies = title_unique(query)
+<<<<<<< HEAD
+=======
+
+>>>>>>> e68191e (MOV-20 save poster link and modify GetReviews.py to save more movies)
         num = len(movies)
         print(f"Number of movies found: {num}", flush=True)
         
@@ -195,17 +247,31 @@ def generar_reporte():
         if year:
             html += f"<h2>Release year: {year}</h2>"
         
-        html += "<ul>"
+        html += f"Found {num} of {n}<br><br><ul>"
         
         for movie in movies:
+            html += "<li>"
+            poster_url = movie.get("poster_url", None)
+            if poster_url:
+                html += f"<img src='{poster_url}' alt='Poster' style='height: 100px;'><br>"
             if fullInfo:
+<<<<<<< HEAD
               html += f"<li>{movie['title']} - {movie['release_date']} - genre:{movie['genre_names']} - emotion:{movie['emotion']} </li>"
+=======
+                html += f"{movie['title']} - {movie['release_date']} - genre:{movie['genre_names']} - emotion: {movie['emotion']}</li>"
+>>>>>>> e68191e (MOV-20 save poster link and modify GetReviews.py to save more movies)
             else:
-              html += f"<li>{movie['_id']} - {movie['release_date']} </li>"
+                html += f"{movie['_id']} - {movie['release_date']} </li>"
                     
         html += """
             </ul>
+<<<<<<< HEAD
             <a href="/"><button>Back</button></a><br>
+=======
+            <a href="/"><button>Back</button></a>
+            </body>
+            </html>
+>>>>>>> e68191e (MOV-20 save poster link and modify GetReviews.py to save more movies)
             """
         html += f"(movies found: {num})</body></html>"
         return html

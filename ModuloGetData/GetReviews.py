@@ -25,6 +25,8 @@ reviews_collection = db.reviews
 
 
 all_reviews = []
+
+
 def get_reviews():
   #Extraer las reviews
   api_key = os.getenv('API_KEY')
@@ -35,73 +37,81 @@ def get_reviews():
   genres_response = requests.get(genres_url)
   genres_data = genres_response.json()
   genres_dict = {genre['id']: genre['name'] for genre in genres_data['genres']}
-  genres_dict
 
   all_movie_ids = []
 
   # URL para obtener las peliculas mejor calificadas
-  base_url = "https://api.themoviedb.org/3"
-  endpoint = "/movie/top_rated"  # o "/movie/popular"
-  params = {
-      "api_key": api_key,
-  #    "language": "es-ES",
-  #    "sort_by": "popularity.desc",
-      "page": 1
-  }
-
+  #base_url = "https://api.themoviedb.org/3"
+  #endpoint = "/movie/top_rated"  
+  
+  i = 0
   #Obtener peliculas y reviews de varias páginas
-  for page in range(1, 500):
-      params["page"] = page
-      # Realizamos solicitud GET
-      response = requests.get(base_url + endpoint, params=params) 
+  for year in range(1980, 2025):
+    for page in range(1, 20):
+        params = {
+            "api_key": api_key,
+            "language": "es-ES",
+            "sort_by": "vote_count.desc",
+            "vote_count.gte": 20,
+            "year": year,
+            "page": page }
+        url = f"https://api.themoviedb.org/3/discover/movie" 
+        # Realizamos solicitud GET
+        response = requests.get(url, params=params) 
 
-      #Verificamos que la solicitud fue exitosa
-      if response.status_code == 200:
-          # Convertimos a un formato JSON
-          movies = response.json()["results"]
-          #Extraemos  titulo, genero, fecha de estreno, otros metadatos y agregamos a un diccionario el movie_id
-          for movie in movies:  
-            movie_id = movie['id']
-            title = movie.get('title', 'Sin título')
-            release_date = movie.get('release_date', '')
-            vote_average = movie.get('vote_average', 0)
-            genre_names = ', '.join([genres_dict.get(genre_id, 'Desconocido') for genre_id in movie.get('genre_ids', [])])
-            all_movie_ids.append(movie_id)
+        #Verificamos que la solicitud fue exitosa
+        if response.status_code == 200:
+            # Convertimos a un formato JSON
+            movies = response.json().get("results", [])
+            #Extraemos  titulo, genero, fecha de estreno, otros metadatos y agregamos a un diccionario el movie_id
+            for movie in movies:  
+              movie_id = movie['id']
+              title = movie.get('title', 'Sin título')
+              release_date = movie.get('release_date', '')
+              vote_average = movie.get('vote_average', 0)
+              genre_names = ', '.join([genres_dict.get(genre_id, 'Desconocido') for genre_id in movie.get('genre_ids', [])])
+              poster_path = movie.get('poster_path')  
+              poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}" if poster_path else None
+              all_movie_ids.append(movie_id)
 
-            #Hacemos el request para extraer las reviews
-            review_url = f"https://api.themoviedb.org/3/movie/{movie_id}/reviews?api_key={api_key}"
-            review_response =  requests.get(review_url)
+              #Hacemos el request para extraer las reviews
+              review_url = f"https://api.themoviedb.org/3/movie/{movie_id}/reviews?api_key={api_key}"
+              review_response =  requests.get(review_url)
 
-            #Obtener los datos de la pelicula actual
-            if review_response.status_code == 200:
-              review_data = review_response.json()
-              #Si review esta vacio continuamos
-              if not review_data["results"]:
-                continue
-              #Agregamos a un diccionario todos nuestros datos 
-              for review in review_data['results']:
-                cleaned_review = clean_review(review.get('content', ''))
-                emotion_review = classify_emotion(cleaned_review) 
+              #Obtener los datos de la pelicula actual
+              if review_response.status_code == 200:
+                review_data = review_response.json()
+                #Si review esta vacio continuamos
+                if not review_data["results"]:
+                  continue
+                #Agregamos a un diccionario todos nuestros datos 
+                for review in review_data['results']:
+                  cleaned_review = clean_review(review.get('content', ''))
+                  emotion_review = classify_emotion(cleaned_review) 
+                  
+                  save_reviews({'movie_id': movie_id,
+                                      'title': title,
+                                      'release_date': release_date,
+                                      'vote_average': vote_average,
+                                      'genre_names': genre_names,
+                                      'poster_url': poster_url,
+                                      'review': cleaned_review,
+                                      'emotion': emotion_review  })
+                  i += 1
+                  print(f"=== INSERTANDO EL REGISTRO {i}")
+              else:
+                print(f"Error en página {movie_id}: {review_response.status_code}")
 
-                save_reviews({'movie_id': movie_id,
-                                    'title': title,
-                                    'release_date': release_date,
-                                    'vote_average': vote_average,
-                                    'genre_names': genre_names,
-                                    'review': cleaned_review,
-                                    'emotion': emotion_review})
-            else:
-              print(f"Error en página {movie_id}: {review_response.status_code}")
-
-      else:
-        print(f"Error en página {page}: {response.status_code}")
+        else:
+          print(f"Error en página {page}: {response.status_code}")
 
 
   print(f"IDs obtenidos: {len(all_movie_ids)}")
   print(f"Reviews obtenidos: {len(all_reviews)}")
 
   return all_reviews 
-
+  
+  
 
 def save_reviews(review):
   reviews_collection.insert_one(review)
@@ -109,11 +119,10 @@ def save_reviews(review):
 
 n = reviews_collection.count_documents({})
 if n==0:
-  print("=== INSERTANDO REGISTROS EN MOVIESDB ===")
+  print("=== INSERTANDO EN MOVIESDB ===")
   get_reviews()
 else:
-  print("=== MOVIESDB YA TIENE REGISTROS ===")
-
+  print("=== MOVIESDB CONTIENE YA REGISTROS ===")
 
 client.close()
 
