@@ -14,18 +14,10 @@ port = os.getenv("MONGO_PORT", "27017")
 
 client = MongoClient(f"mongodb://{username}:{password}@{host}:{port}/{db_name}?authSource={db_name}")
 
-
-#client = MongoClient(
-#    "mongodb://appuser:apppassword@mongodb:27017/moviesdb?authSource=moviesdb"
-#)
-
-
 db = client[os.getenv("MONGO_APP_DB", "moviesdb")]
 reviews_collection = db.reviews
 
-
 all_reviews = []
-
 
 def get_reviews():
   #Extraer las reviews
@@ -111,8 +103,6 @@ def get_reviews():
 
   return all_reviews 
   
-  
-
 def save_reviews(review):
   reviews_collection.insert_one(review)
   print("Insertando en moviesdb: ", review)
