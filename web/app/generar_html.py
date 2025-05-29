@@ -2,20 +2,14 @@ from pymongo import MongoClient
 from flask import Flask, render_template_string, redirect, url_for, request
 import os
 import sys
-import json			 #para exportar la BD 
-from bson.json_util import dumps
+
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
-sys.stdout.reconfigure(line_buffering=True)  # Forzar flush inmediato
+sys.stdout.reconfigure(line_buffering=True)  
 
 app = Flask(__name__)
 
-# Configuración MongoDB
-#client = MongoClient(
-#    "mongodb://admin:admin123@base_mongo:27017/",
-#    authSource="admin"
-#)
 
 load_dotenv()
 
@@ -31,19 +25,6 @@ print("=== client=", client, flush=True)
 
 db = client[os.getenv("MONGO_APP_DB", "moviesdb")]
 reviews_collection = db.reviews
-n = reviews_collection.count_documents({})
-print(f"Total documentos: {n}", flush=True)
-
-# Exportar todos los documentos a un archivo JSON
-#def export_to_json(collection, filename):
-#    cursor = collection.find({})
-#    with open(filename, 'w') as file:
-#        for document in cursor:
-#            file.write(dumps(document) + '\n')
-
-# Ejecutar la exportación
-#export_to_json(reviews_collection, 'moviesdb_backup.json')
-#print("Exportación completada. Datos guardados en moviesdb_backup.json")
 
 @app.route('/')
 def home():
@@ -51,7 +32,7 @@ def home():
     <html>
     <body>
     """
-    html += f"<h1>Movie Explorer (total movies: {n})</h1>"
+    html += f"<h1>Movie Explorer </h1>"
     html += """
         <form action="/generar_reporte" method="get">
         
@@ -86,6 +67,31 @@ def home():
             <label for="fear">
               <input type="checkbox" id="fear" name="fear" value="true"> Fear
             </label><br>
+            </p>
+            
+            <p>
+            <label for="genre">Filter by Genre:</label>
+            <select id="genre" name="genre">
+                <option value="">All Genres</option>
+                <option value="Crimen">Crime</option>
+                <option value="Historia">History</option>
+                <option value="Familia">Family</option>
+                <option value="Acción">Action</option>
+                <option value="Drama">Drama</option>
+                <option value="Película de TV">TV Movie</option>
+                <option value="Misterio">Mistery</option>
+                <option value="Suspense">Suspense</option>
+                <option value="Comedia">Comedy</option>
+                <option value="Bélica">Military</option>
+                <option value="Música">Music</option>
+                <option value="Western">Western</option>
+                <option value="Animación">Animation</option>
+                <option value="Romance">Romance</option>
+                <option value="Aventura">Adventure</option>
+                <option value="Fantasía">Fantasy</option>
+                <option value="Terror">Terror</option>
+                <option value="Ciencia ficción">SciFi</option>
+            </select><br>
             </p>
             
             <!-- Checkbox para información completa -->
@@ -137,6 +143,8 @@ def generar_reporte():
     surprise_arg = request.args.get('surprise')
     neutral_arg = request.args.get('neutral')
     fear_arg = request.args.get('fear')
+
+    genre_arg = request.args.get('genre')
     
     numPage = int(numPage_arg) if numPage_arg else 30
     year = int(year_arg) if year_arg else None
@@ -158,6 +166,7 @@ def generar_reporte():
     if fear_arg=="true":
       active_emotions.append("fear")
      
+    n = reviews_collection.count_documents({})
     try:
         query = {}
         if year:
@@ -166,13 +175,16 @@ def generar_reporte():
             query["title"] = {"$regex": keyWord, "$options": "i"} 
         if active_emotions:
             query["emotion.label"] = {"$in": active_emotions}
-   
+       
+        if genre_arg != "":
+            query["genre_names"] = {"$regex": f"\\b{genre_arg}\\b", "$options": "i"}
+      
         if fullInfo:
             movies = list(reviews_collection.find(query).limit(numPage))
         else:
             movies = title_unique(query)
-
-        print(f"Number of movies found: {len(movies)}", flush=True)
+        num = len(movies)
+        print(f"Number of movies found: {num}", flush=True)
         
         html = """
             <html>
@@ -187,16 +199,15 @@ def generar_reporte():
         
         for movie in movies:
             if fullInfo:
-              html += f"<li>{movie['title']} - {movie['release_date']} - emotion:{movie['emotion']} </li>"
+              html += f"<li>{movie['title']} - {movie['release_date']} - genre:{movie['genre_names']} - emotion:{movie['emotion']} </li>"
             else:
               html += f"<li>{movie['_id']} - {movie['release_date']} </li>"
                     
         html += """
             </ul>
-            <a href="/"><button>Volver</button></a>
-            </body>
-            </html>
+            <a href="/"><button>Back</button></a><br>
             """
+        html += f"(movies found: {num})</body></html>"
         return html
         
     except Exception as e:
