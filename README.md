@@ -5,7 +5,7 @@
 ---
 
 ##  Overview
-Movie Explorer is a Python-based app that recommends movies based on how you're feeling. By combining data from The Movie Database (TMDB) API with emotion-genre mapping techniques, it helps you find films that match your mood. Whether you're feeling happy, sad, or something in between, Movie Explorer offers personalized suggestions—while still letting you filter by genre, release year, or ratings if you want to.
+Movie Explorer is a Python-based app that recommends movies based on how you're feeling. By combining data from The Movie Database (TMDB) API with emotion-genre mapping techniques, it helps you find films that match your mood. Whether you're feeling happy, sad, or something in between, Movie Explorer offers personalized suggestions—while still letting you filter by genre, release year, or keywords if you want to.
 
 ---
 
@@ -35,14 +35,14 @@ While emotion is the starting point, you can still narrow things down by release
 A lot of movies aren’t tied to just one emotion. People might feel a mix of excitement, nostalgia, or even sadness from the same film. That’s part of what makes movies powerful. This project includes those overlaps, based on real opinions from viewers, making recommendations feel more personal and interesting.
 
 - Simple and Expandable
-The app is built in Python and uses the TMDb API. It’s meant to be easy to use and modify. In the future, it could even work with emotion-detection tools or personalized mood profiles.
+The app is built in Python and uses the TMDB API. It’s meant to be easy to use and modify. In the future, it could even work with emotion-detection tools or personalized mood profiles.
 ---
 
 ##  Installation  
 
 ### Requirements
 - Python 3.10  
-- A free API key from TMDb (get it by clicking this link  https://www.themoviedb.org/settings/api) 
+- A free API key from TMDB (get it by clicking this link  https://www.themoviedb.org/settings/api) 
 
 ### Setup Instructions  
 1. **Clone the repository**  
@@ -50,7 +50,7 @@ The app is built in Python and uses the TMDb API. It’s meant to be easy to use
    git clone https://github.com/Marzerp/movie-explorer.git
    cd movie-explorer
    ```
-2. Add your TMDb API key
+2. Add your TMDB API key
    Create a .env file (use .env_example as reference) in the proyect root and add:
    API_KEY=your_api_key
 
@@ -59,7 +59,7 @@ The app is built in Python and uses the TMDb API. It’s meant to be easy to use
    docker-compose up --build
    ```	
 4. Access the app
-   Once running, open your browser and go to http://localhost:80
+   open your browser and go to http://localhost:80
 
 ---
 
