@@ -51,7 +51,7 @@ The app is built in Python and uses the TMDB API. It’s meant to be easy to use
    cd movie-explorer
    ```
 2. Add your TMDB API key
-   Create a .env file (use .env_example as reference) in the proyect root and add:
+   - Create a .env file (use .env_example as reference) in the proyect root and add:
    API_KEY=your_api_key
 
 3. Run the project
@@ -59,7 +59,7 @@ The app is built in Python and uses the TMDB API. It’s meant to be easy to use
    docker-compose up --build
    ```	
 4. Access the app
-   open your browser and go to http://localhost:80
+   - Open your browser and go to http://localhost:80
 
 ---
 
