@@ -106,7 +106,13 @@ def get_reviews():
 def save_reviews(review):
   reviews_collection.insert_one(review)
   print("Insertando en moviesdb: ", review)
-get_reviews()
+
+n = reviews_collection.count_documents({})
+if n==0:
+  print("=== INSERTANDO REGISTROS EN MOVIESDB ===")
+  get_reviews()
+else:
+  print("=== MOVIESDB YA TIENE REGISTROS ===")
 
 
 client.close()
