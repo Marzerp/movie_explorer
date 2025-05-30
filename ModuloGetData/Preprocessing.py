@@ -2,33 +2,33 @@ import pandas as pd
 import re
 import nltk
 from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
+from nltk.stem import WordNetLemmatizer
 
 from transformers import pipeline
 
 nltk.download('punkt')
 nltk.download('stopwords')
-nltk.download('punkt_tab')
+nltk.download('punkt')
 
-stemmer = PorterStemmer()
+stop_words = set(stopwords.words('english'))
+
 
 def clean_review(text):
     if not isinstance(text, str):
         return ""
-    text = re.sub(r'@[^\s]+', '', text)  # eliminar menciones
-    text = re.sub(r'https?://\S+', '', text)  # eliminar URLs
-    text = re.sub(r'#', '', text)  # eliminar signos de #
-    text = text.lower()  # pasar a minúsculas
-    text = re.sub(r'\s+', ' ', text)  # remover espacios duplicados
-    text = re.sub(r'[^\w\s]', '', text)  # remover puntuación
-    text = re.sub(r'\d+', '', text)  # remover números
-    tokens = nltk.word_tokenize(text)
-    stop_words = set(stopwords.words('english'))
-    filtered = [word for word in tokens if word not in stop_words]
-    stemmed = [stemmer.stem(word) for word in filtered]
-    
-    return ' '.join(stemmed)
+    # Conservar signos de exclamación/interrogación (importantes para sentimiento)
+    text = re.sub(r'([!?])', r' \1 ', text)  # Añade espacios alrededor
+    # Eliminar URLs pero conservar números y algunas puntuaciones
+    text = re.sub(r'http\S+|@\S+|#', '', text)
+    # Minúsculas y eliminar caracteres especiales excepto !?
+    text = re.sub(r'[^a-z!?\s]', '', text.lower())
+    lemmatizer = WordNetLemmatizer()
+    tokens = text.split()
+    tokens = [lemmatizer.lemmatize(word) for word in tokens if word not in stop_words]
 
+    return ' '.join(tokens)
+    
+    
 classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", top_k=1)
 def classify_emotion(review):
     truncated_review = review[:720]
