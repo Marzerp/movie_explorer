@@ -96,7 +96,6 @@ def home():
             </select><br>
             </p>
             
-            <!-- Checkbox para información completa -->
             <label for="fullInfo">
               <input type="checkbox" id="fullInfo" name="fullInfo" value="true"> Display Full Info
             </label><br>
