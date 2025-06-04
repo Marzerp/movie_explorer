@@ -1,7 +1,8 @@
 from pymongo import MongoClient
-from flask import Flask, render_template_string, redirect, url_for, request
+from flask import Flask, render_template_string, redirect, url_for, request, session
 import os
 import sys
+import random 
 
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -19,6 +20,9 @@ db_name = os.getenv("MONGO_APP_DB")
 host = os.getenv("MONGO_HOST")
 port = os.getenv("MONGO_PORT", "27017")
 
+app.secret_key = os.getenv("FLASK_CAPTCHA_KEY") 
+
+
 client = MongoClient(f"mongodb://{username}:{password}@{host}:{port}/{db_name}?authSource={db_name}")
 
 print("=== client=", client, flush=True)
@@ -28,6 +32,11 @@ reviews_collection = db.reviews
 
 @app.route('/')
 def home():
+    num1 = random.randint(1, 10)
+    num2 = random.randint(1, 10)
+    session['captcha_answer'] = num1 + num2
+    
+    
     html = """
     <html>
     <body>
@@ -99,16 +108,35 @@ def home():
             <label for="fullInfo">
               <input type="checkbox" id="fullInfo" name="fullInfo" value="true"> Display Full Info
             </label><br>
-    
+            <br>
+            <div style="margin: 10px 0; padding: 10px; background: #f0f0f0;">
+            """
+    html += f"<label>CAPTCHA: ¿{num1} + {num2}?</label>"
+    html += """
+            <input type="number" name="captcha" required>
+            </div>
             <button type="submit">Search</button>
-        </form>
-    </body>
-    </html>
-    """
+            </form>
+            </body>
+            </html>
+            """
     return html
 
 @app.route('/generar_reporte')
 def generar_reporte():
+
+    user_answer = request.args.get('captcha', type=int)
+    correct_answer = session.get('captcha_answer')
+    
+    if user_answer is None or user_answer != correct_answer:
+       html ="""
+             <html><body>
+             </ul>
+             <a href="/"><button>Please try again</button></a>
+             """
+       return html
+#        return "Please try again", 400
+    
     def title_unique(query):
       pipeline = [
   
