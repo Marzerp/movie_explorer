@@ -20,9 +20,6 @@ db_name = os.getenv("MONGO_APP_DB")
 host = os.getenv("MONGO_HOST")
 port = os.getenv("MONGO_PORT", "27017")
 
-app.secret_key = os.getenv("FLASK_CAPTCHA_KEY") 
-
-
 client = MongoClient(f"mongodb://{username}:{password}@{host}:{port}/{db_name}?authSource={db_name}")
 
 print("=== client=", client, flush=True)
@@ -32,10 +29,6 @@ reviews_collection = db.reviews
 
 @app.route('/')
 def home():
-    num1 = random.randint(1, 10)
-    num2 = random.randint(1, 10)
-    session['captcha_answer'] = num1 + num2
-    
     
     html = """
     <html>
@@ -45,7 +38,7 @@ def home():
     html += f"<h1>Movie Explorer</h1>"
 
     html += """
-        <form action="/generar_reporte" method="get">
+        <form action="/generar_reporte" method="post">
         
             <label for="year">Release year:</label>
             <input type="number" id="year" name="year" placeholder="2025"><br>
@@ -109,12 +102,6 @@ def home():
               <input type="checkbox" id="fullInfo" name="fullInfo" value="true"> Display Full Info
             </label><br>
             <br>
-            <div style="margin: 10px 0; padding: 10px; background: #f0f0f0;">
-            """
-    html += f"<label>CAPTCHA: ¿{num1} + {num2}?</label>"
-    html += """
-            <input type="number" name="captcha" required>
-            </div>
             <button type="submit">Search</button>
             </form>
             </body>
@@ -122,20 +109,8 @@ def home():
             """
     return html
 
-@app.route('/generar_reporte')
+@app.route('/generar_reporte', methods=['POST'])
 def generar_reporte():
-
-    user_answer = request.args.get('captcha', type=int)
-    correct_answer = session.get('captcha_answer')
-    
-    if user_answer is None or user_answer != correct_answer:
-       html ="""
-             <html><body>
-             </ul>
-             <a href="/"><button>Please try again</button></a>
-             """
-       return html
-#        return "Please try again", 400
     
     def title_unique(query):
       pipeline = [
@@ -162,21 +137,21 @@ def generar_reporte():
     print("=== INICIO GENERAR_REPORTE ===", flush=True)
     
     # Obtener parámetros
-    year_arg = request.args.get('year')
-    keyWord = request.args.get('keyWord')
-    numPage_arg = request.args.get('numPage')
-    fullInfo_arg = request.args.get('fullInfo')
-    joy_arg = request.args.get('joy')
-    anger_arg = request.args.get('anger')
-    sadness_arg = request.args.get('sadness')
-    disgust_arg = request.args.get('disgust')
-    surprise_arg = request.args.get('surprise')
-    neutral_arg = request.args.get('neutral')
-    fear_arg = request.args.get('fear')
+    year_arg = request.form.get('year')
+    keyWord = request.form.get('keyWord')
+    numPage_arg = request.form.get('numPage')
+    fullInfo_arg = request.form.get('fullInfo')
+    joy_arg = request.form.get('joy')
+    anger_arg = request.form.get('anger')
+    sadness_arg = request.form.get('sadness')
+    disgust_arg = request.form.get('disgust')
+    surprise_arg = request.form.get('surprise')
+    neutral_arg = request.form.get('neutral')
+    fear_arg = request.form.get('fear')
 
-    genre_arg = request.args.get('genre')
+    genre_arg = request.form.get('genre')
     
-    genre_arg = request.args.get('genre')
+    genre_arg = request.form.get('genre')
     
     numPage = int(numPage_arg) if numPage_arg else 10
     year = int(year_arg) if year_arg else None
@@ -242,12 +217,13 @@ def generar_reporte():
                 html += f"{movie['title']} - {movie['release_date']} - genre:{movie['genre_names']} - emotion: {movie['emotion']}</li>"
             else:
                 html += f"{movie['_id']} - {movie['release_date']} </li>"
-                    
+
         html += """
+            <br>
             </ul>
-            <a href="/"><button>Back</button></a>
+            <a href="/"><button>Back</button></a></body></html>
             """
-        html += f"(movies found: {num})</body></html>"
+       
         return html
         
     except Exception as e:
