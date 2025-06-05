@@ -1,18 +1,27 @@
 from pymongo import MongoClient
 from flask import Flask, render_template_string, redirect, url_for, request, session
+from flask import send_from_directory
 import os
 import sys
-import random 
+import random
 
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
+from PIL import Image, ImageDraw, ImageFont
+import io
+import base64
+
 sys.stdout.reconfigure(line_buffering=True)  
 
-app = Flask(__name__)
-
-
 load_dotenv()
+
+app = Flask(__name__)
+app.secret_key = os.getenv('FLASK_CAPTCHA_KEY')
+
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
 
 username = os.getenv("MONGO_APP_USER")
 password = os.getenv("MONGO_APP_PASSWORD")
@@ -27,8 +36,42 @@ print("=== client=", client, flush=True)
 db = client[os.getenv("MONGO_APP_DB", "moviesdb")]
 reviews_collection = db.reviews
 
+#CAPTCHA de imágenes
+CAPTCHA_IMAGES_DIR = "captcha_images"
+os.makedirs(CAPTCHA_IMAGES_DIR, exist_ok=True)
+
+def generate_image_captcha():
+    # Generar texto aleatorio
+    text = ''.join(random.choices('ABCDEFGHJKLMNPQRSTUVWXYZ23456789', k=6))
+    
+    # Crear imagen
+    image = Image.new('RGB', (200, 80), color=(240, 240, 240))
+    draw = ImageDraw.Draw(image)
+    
+    try:
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 24)
+    except:
+        font = ImageFont.load_default()
+    
+    # Dibujar texto con distorsión
+    for i, char in enumerate(text):
+        draw.text((20 + i*30, 20), char, font=font, fill=(random.randint(0, 150), random.randint(0, 150), random.randint(0, 150)))
+    
+    # Añadir ruido
+    for _ in range(7000):
+        draw.point((random.randint(0, 200), random.randint(0, 80)), fill=(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+    
+    # Guardar en memoria
+    buffered = io.BytesIO()
+    image.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
+    
+    return text, img_str
+
 @app.route('/')
 def home():
+    captcha_text, captcha_image = generate_image_captcha()
+    session['captcha_text'] = captcha_text
     
     html = """
     <html>
@@ -102,15 +145,36 @@ def home():
               <input type="checkbox" id="fullInfo" name="fullInfo" value="true"> Display Full Info
             </label><br>
             <br>
+             <div style="margin: 10px 0; padding: 10px; background: #f0f0f0;">
+            """
+    html += f"<label>Type the characters you see in the picture</label>"
+    html += f'<img src="data:image/png;base64,{captcha_image}" alt="CAPTCHA">'
+    html += """
+            <input type="text" name="captcha" required>
+            </div>
             <button type="submit">Search</button>
             </form>
             </body>
             </html>
-            """
+            """.format(captcha_image=captcha_image)
+
     return html
 
 @app.route('/generar_reporte', methods=['POST'])
 def generar_reporte():
+    
+    user_answer = request.args.get('captcha', '').upper()
+    correct_answer = session.get('captcha_text', '').upper()
+    
+    if user_answer is None or user_answer != correct_answer:
+       return """
+        <html><body>
+        <h2>Incorrect CAPTCHA. Please try again.</h2>
+        <a href="/"><button>Back</button></a>
+        </body></html>
+        """, 400
+    else: 
+      session.pop('captcha_text', None)
     
     def title_unique(query):
       pipeline = [
