@@ -76,11 +76,7 @@ The app is built in Python and uses the TMDB API. It’s meant to be easy to use
    docker-compose up --build
    ```
 4. Access the app
-<<<<<<< Updated upstream
-   - Open your browser and go to http://localhost:8081/
-=======
    - Open your browser and go to https://localhost/
->>>>>>> Stashed changes
 
 ---
 
