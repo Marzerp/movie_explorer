@@ -26,7 +26,6 @@ all_reviews = []
 def get_reviews():
   #Extraer las reviews
   api_key = os.getenv('API_KEY')
-#  print("***  api_key=",api_key)
 
   #Diccionario con los generos y ids de las peliculas
   genres_url = f'https://api.themoviedb.org/3/genre/movie/list?api_key={api_key}&language=es-MX'
@@ -121,4 +120,5 @@ else:
 client.close()
 
 print("*** FIN GetReviews ***")
+
 

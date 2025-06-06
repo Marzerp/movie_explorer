@@ -59,11 +59,8 @@ services:
     image: nginx:latest
     ports:
       - "8081:80"
-<<<<<<< Updated upstream
-=======
 #      - "80:80"   # Puerto HTTP para redirección
       - "443:443"  # Puerto HTTPS
->>>>>>> Stashed changes
     volumes:
       - ./web/html:/usr/share/nginx/html
       - ./output:/output
