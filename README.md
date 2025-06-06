@@ -22,6 +22,7 @@ Feel free to reach out with questions, feedback, or collaboration ideas to arace
 ## License
 
 This proyects is under [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html).
+
 ---
 
 ##  Introduction  
