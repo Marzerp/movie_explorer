@@ -100,7 +100,6 @@ The app is built in Python and uses the TMDB API. It’s meant to be easy to use
 
 - Example Search by Emotion (Joy)
 <p align="center"> <img src="docs/report_2.png" alt="Search by Emotion" width="600"/> </p>
-<<<<<<< Updated upstream
 
 ---
 
@@ -136,41 +135,3 @@ While there’s significant room for growth—such as multilingual support, more
  
 - Emotion English DistilRoBERTa-base
   - Jochen Hartmann, "Emotion English DistilRoBERTa-base". https://huggingface.co/j-hartmann/emotion-english-distilroberta-base/, 2022.
-=======
-
----
-
-## Conclusions
-
-Movie Explorer is a small but meaningful step toward improving how people discover films. By organizing movie reviews based on emotional tones, the project shows that even simple tools can offer a more personal way to browse content and a different perspective on movie recommendations.
-
-While it’s a small-scale prototype, this app successfully demonstrates how combining public APIs, natural language processing, and emotional tagging can lead to more relatable, personalized recommendations than typical genre or popularity-based systems. It's especially helpful for users who prefer to choose movies based on how they feel, rather than popularity or algorithms. This project doesn't aim to compete with commercial platforms, but rather to explore how mood recognition might enhance user experience.
-
-While there’s significant room for growth—such as multilingual support, more nuanced emotional models, and a refined user interface—Movie Explorer this version lays a solid foundation for future experiments. It provides a strong foundation for future work in emotion-aware recommendation systems and user-centered design.
-
----
-
-## References and Resources
-
-- The Movie Database API
-  - https://developers.themoviedb.org/3
-
-- Flask Documentation
-  - https://flask.palletsprojects.com
-
-- MongoDB Documentation
-  - https://www.mongodb.com/docs
-
-- Docker & Docker Compose
-  - https://docs.docker.com/compose/
-
-- Natural Language Procesing
-  - Lin, Shangyue. (2024). Text emotional analysis in Natural Language Processing. Applied and Computational Engineering. 36. 163-172. 10.54254/2755-2721/36/20230440.
- 
-- Lemmanization and Stemming
-  - Khyani, Divya & B S, Siddhartha & Niveditha, N. & M., Divya & Y M, Dr. (2021). An Interpretation of Lemmatization and Stemming in Natural Language Processing. Shanghai Ligong Daxue Xuebao/Journal of University of Shanghai for Science and Technology. 22. 350-357.
- 
-- Emotion English DistilRoBERTa-base
-  - Jochen Hartmann, "Emotion English DistilRoBERTa-base". https://huggingface.co/j-hartmann/emotion-english-distilroberta-base/, 2022.
-
->>>>>>> Stashed changes
