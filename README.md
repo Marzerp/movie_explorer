@@ -80,7 +80,7 @@ The app is built in Python and uses the TMDB API. It’s meant to be easy to use
 
 ---
 
-## Tecnhologies
+## Technologies
 
 - TMDB API
 - Python
