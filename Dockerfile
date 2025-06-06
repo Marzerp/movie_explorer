@@ -1,6 +1,8 @@
 # Usa la imagen oficial de MongoDB
 FROM mongo:7.0
 
+RUN python -m nltk.downloader punkt stopwords wordnet
+
 # Opcional: Copia scripts de inicialización
 COPY ./mongo-init.js /docker-entrypoint-initdb.d/
 

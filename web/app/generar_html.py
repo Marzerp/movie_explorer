@@ -1,33 +1,39 @@
 from pymongo import MongoClient
 from flask import Flask, render_template_string, redirect, url_for, request, session
+
 from flask import send_from_directory
+
 import os
 import sys
-import random
-
+import random 
 from dotenv import load_dotenv
-from pymongo import MongoClient
+
 
 from PIL import Image, ImageDraw, ImageFont
 import io
 import base64
 
+
 sys.stdout.reconfigure(line_buffering=True)  
 
-load_dotenv()
-
 app = Flask(__name__)
-app.secret_key = os.getenv('FLASK_CAPTCHA_KEY')
 
+#####################
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     return send_from_directory('static', filename)
+###########################
+
+load_dotenv()
 
 username = os.getenv("MONGO_APP_USER")
 password = os.getenv("MONGO_APP_PASSWORD")
 db_name = os.getenv("MONGO_APP_DB")
 host = os.getenv("MONGO_HOST")
 port = os.getenv("MONGO_PORT", "27017")
+
+app.secret_key = os.getenv("FLASK_CAPTCHA_KEY") 
+
 
 client = MongoClient(f"mongodb://{username}:{password}@{host}:{port}/{db_name}?authSource={db_name}")
 
@@ -36,7 +42,8 @@ print("=== client=", client, flush=True)
 db = client[os.getenv("MONGO_APP_DB", "moviesdb")]
 reviews_collection = db.reviews
 
-#CAPTCHA de imágenes
+##########################################
+# Configuración de CAPTCHA de imágenes
 CAPTCHA_IMAGES_DIR = "captcha_images"
 os.makedirs(CAPTCHA_IMAGES_DIR, exist_ok=True)
 
@@ -58,7 +65,7 @@ def generate_image_captcha():
         draw.text((20 + i*30, 20), char, font=font, fill=(random.randint(0, 150), random.randint(0, 150), random.randint(0, 150)))
     
     # Añadir ruido
-    for _ in range(7000):
+    for _ in range(5000):
         draw.point((random.randint(0, 200), random.randint(0, 80)), fill=(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
     
     # Guardar en memoria
@@ -67,11 +74,15 @@ def generate_image_captcha():
     img_str = base64.b64encode(buffered.getvalue()).decode()
     
     return text, img_str
+    
+    
+#########################################
 
 @app.route('/')
 def home():
     captcha_text, captcha_image = generate_image_captcha()
     session['captcha_text'] = captcha_text
+    
     
     html = """
     <html>
@@ -141,11 +152,12 @@ def home():
             </select><br>
             </p>
             
+            <!-- Checkbox para información completa -->
             <label for="fullInfo">
               <input type="checkbox" id="fullInfo" name="fullInfo" value="true"> Display Full Info
             </label><br>
             <br>
-             <div style="margin: 10px 0; padding: 10px; background: #f0f0f0;">
+            <div style="margin: 10px 0; padding: 10px; background: #f0f0f0;">
             """
     html += f"<label>Type the characters you see in the picture</label>"
     html += f'<img src="data:image/png;base64,{captcha_image}" alt="CAPTCHA">'
@@ -157,13 +169,12 @@ def home():
             </body>
             </html>
             """.format(captcha_image=captcha_image)
-
     return html
 
 @app.route('/generar_reporte', methods=['POST'])
 def generar_reporte():
-    
-    user_answer = request.args.get('captcha', '').upper()
+
+    user_answer = request.form.get('captcha', '').upper()
     correct_answer = session.get('captcha_text', '').upper()
     
     if user_answer is None or user_answer != correct_answer:
@@ -173,8 +184,7 @@ def generar_reporte():
         <a href="/"><button>Back</button></a>
         </body></html>
         """, 400
-    else: 
-      session.pop('captcha_text', None)
+    session.pop('captcha_text', None)
     
     def title_unique(query):
       pipeline = [
@@ -195,7 +205,6 @@ def generar_reporte():
       ]
 
       movies = list(reviews_collection.aggregate(pipeline))
-      print(movies)
       return movies
     
     print("=== INICIO GENERAR_REPORTE ===", flush=True)
@@ -213,8 +222,6 @@ def generar_reporte():
     neutral_arg = request.form.get('neutral')
     fear_arg = request.form.get('fear')
 
-    genre_arg = request.form.get('genre')
-    
     genre_arg = request.form.get('genre')
     
     numPage = int(numPage_arg) if numPage_arg else 10
@@ -240,7 +247,6 @@ def generar_reporte():
     n = reviews_collection.count_documents({})
     print(f"Total documentos: {n}", flush=True)
      
-    n = reviews_collection.count_documents({})
     try:
         query = {}
         if year:
@@ -252,7 +258,7 @@ def generar_reporte():
         if genre_arg != "":
             query["genre_names"] = {"$regex": f"\\b{genre_arg}\\b", "$options": "i"}
       
-  
+        
         if fullInfo:
             movies = list(reviews_collection.find(query).limit(numPage))
         else:
@@ -281,13 +287,11 @@ def generar_reporte():
                 html += f"{movie['title']} - {movie['release_date']} - genre:{movie['genre_names']} - emotion: {movie['emotion']}</li>"
             else:
                 html += f"{movie['_id']} - {movie['release_date']} </li>"
-
+                    
         html += """
-            <br>
             </ul>
-            <a href="/"><button>Back</button></a></body></html>
+            <a href="/"><button>Back</button></a>
             """
-       
         return html
         
     except Exception as e:

@@ -3,6 +3,10 @@ import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from Preprocessing import clean_review , classify_emotion
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 
 load_dotenv()
 
@@ -22,7 +26,7 @@ all_reviews = []
 def get_reviews():
   #Extraer las reviews
   api_key = os.getenv('API_KEY')
-  print("***  api_key=",api_key)
+#  print("***  api_key=",api_key)
 
   #Diccionario con los generos y ids de las peliculas
   genres_url = f'https://api.themoviedb.org/3/genre/movie/list?api_key={api_key}&language=es-MX'
