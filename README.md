@@ -5,7 +5,7 @@
 ---
 
 ##  Overview
-Movie Explorer is a Python-based app that recommends movies based on how you're feeling. By combining data from The Movie Database (TMDB) API with emotion-genre mapping techniques, it helps you find films that match your mood. Whether you're feeling happy, sad, or something in between, Movie Explorer offers personalized suggestions—while still letting you filter by genre, release year, or keywords if you want to.
+Movie Explorer is a Python-based app that recommends movies based on how you're feeling. By combining data from The Movie Database (TMDB) API with emotion-genre mapping techniques, it helps you find films that match your mood. Whether you're feeling happy, sad, or something in between, Movie Explorer offers personalized suggestions while still letting you filter by genre, release year, or keywords if you want to.
 
 ---
 
@@ -32,7 +32,7 @@ Choosing what to watch can be surprisingly stressful, especially with so many op
 
 ##  Justification  
 
-Choosing what to watch can be hard—especially when you're just looking for something that fits your mood. Most platforms don’t let you search by how you feel, even though that’s how many people decide what to watch.
+Choosing what to watch can be hard, especially when you're just looking for something that fits your mood. Most platforms don’t let you search by how you feel, even though that’s how many people decide what to watch.
 
 Movie Explorer tries something different: to use emotions as the starting point. It helps cut down decision time, gives more personal suggestions, and recognizes that movies often make us feel more than one thing—based on real opinions, not just genres.
 
@@ -109,7 +109,7 @@ Movie Explorer is a small but meaningful step toward improving how people discov
 
 While it’s a small-scale prototype, this app successfully demonstrates how combining public APIs, natural language processing, and emotional tagging can lead to more relatable, personalized recommendations than typical genre or popularity-based systems. It's especially helpful for users who prefer to choose movies based on how they feel, rather than popularity or algorithms. This project doesn't aim to compete with commercial platforms, but rather to explore how mood recognition might enhance user experience.
 
-While there’s significant room for growth—such as multilingual support, more nuanced emotional models, and a refined user interface—Movie Explorer this version lays a solid foundation for future experiments. It provides a strong foundation for future work in emotion-aware recommendation systems and user-centered design.
+While there’s significant room for growth, such as multilingual support, more nuanced emotional models, and a refined user interface. This version provides a strong foundation for future work in emotion-aware recommendation systems and user-centered design.
 
 ---
 
