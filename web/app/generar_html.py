@@ -17,11 +17,18 @@ import base64
 sys.stdout.reconfigure(line_buffering=True)  
 
 app = Flask(__name__)
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 
+#####################
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     return send_from_directory('static', filename)
+###########################
+
+load_dotenv()
 
 
 load_dotenv()
@@ -42,7 +49,11 @@ print("=== client=", client, flush=True)
 db = client[os.getenv("MONGO_APP_DB", "moviesdb")]
 reviews_collection = db.reviews
 
+<<<<<<< Updated upstream
 
+=======
+##########################################
+>>>>>>> Stashed changes
 # Configuración de CAPTCHA de imágenes
 CAPTCHA_IMAGES_DIR = "captcha_images"
 os.makedirs(CAPTCHA_IMAGES_DIR, exist_ok=True)
@@ -74,7 +85,12 @@ def generate_image_captcha():
     
     return text, img_str
     
+<<<<<<< Updated upstream
 
+=======
+    
+#########################################
+>>>>>>> Stashed changes
 
 @app.route('/')
 def home():
