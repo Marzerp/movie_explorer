@@ -18,11 +18,11 @@ sys.stdout.reconfigure(line_buffering=True)
 
 app = Flask(__name__)
 
-
+#####################
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     return send_from_directory('static', filename)
-
+###########################
 
 load_dotenv()
 
@@ -42,7 +42,7 @@ print("=== client=", client, flush=True)
 db = client[os.getenv("MONGO_APP_DB", "moviesdb")]
 reviews_collection = db.reviews
 
-
+##########################################
 # Configuración de CAPTCHA de imágenes
 CAPTCHA_IMAGES_DIR = "captcha_images"
 os.makedirs(CAPTCHA_IMAGES_DIR, exist_ok=True)
@@ -68,13 +68,15 @@ def generate_image_captcha():
     for _ in range(5000):
         draw.point((random.randint(0, 200), random.randint(0, 80)), fill=(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
     
+    # Guardar en memoria
     buffered = io.BytesIO()
     image.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode()
     
     return text, img_str
     
-
+    
+#########################################
 
 @app.route('/')
 def home():

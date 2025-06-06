@@ -59,13 +59,10 @@ services:
     image: nginx:latest
     ports:
       - "8081:80"
-#      - "80:80"   # Puerto HTTP para redirección
-      - "443:443"  # Puerto HTTPS
     volumes:
       - ./web/html:/usr/share/nginx/html
       - ./output:/output
       - ./web/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./certs:/etc/nginx/certs # <-- Volumen para certificados SSL
     depends_on:
       - app
     networks:
