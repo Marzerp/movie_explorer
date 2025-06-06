@@ -8,6 +8,7 @@
 Movie Explorer is a Python-based app that recommends movies based on how you're feeling. By combining data from The Movie Database (TMDB) API with emotion-genre mapping techniques, it helps you find films that match your mood. Whether you're feeling happy, sad, or something in between, Movie Explorer offers personalized suggestions—while still letting you filter by genre, release year, or keywords if you want to.
 
 ---
+
 ## Author
 
 This project was created by Araceli Romero, a student of Information and Communication Technologies (TICs) at [UNAM](https://www.unam.mx/), Mexico.
@@ -16,6 +17,11 @@ Movie Explorer was developed as part of the Distributed Computing course (Class 
 
 Feel free to reach out with questions, feedback, or collaboration ideas to araceliromerozerpa@gmail.com
 
+---
+
+## License
+
+This proyects is under [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html).
 ---
 
 ##  Introduction  
