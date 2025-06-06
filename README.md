@@ -126,5 +126,5 @@ While there’s significant room for growth—such as multilingual support, more
 - Lemmanization and Stemming
   - Khyani, Divya & B S, Siddhartha & Niveditha, N. & M., Divya & Y M, Dr. (2021). An Interpretation of Lemmatization and Stemming in Natural Language Processing. Shanghai Ligong Daxue Xuebao/Journal of University of Shanghai for Science and Technology. 22. 350-357.
  
--  Emotion English DistilRoBERTa-base
+- Emotion English DistilRoBERTa-base
   - Jochen Hartmann, "Emotion English DistilRoBERTa-base". https://huggingface.co/j-hartmann/emotion-english-distilroberta-base/, 2022.
