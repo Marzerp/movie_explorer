@@ -21,7 +21,7 @@ Feel free to reach out with questions, feedback, or collaboration ideas to arace
 
 ## License
 
-This proyects is under [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html).
+This projects is under [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html).
 
 ---
 
@@ -38,8 +38,7 @@ Movie Explorer tries something different: to use emotions as the starting point.
 
 ---
 
-##  What This Project Tries to Do
-
+##  Aim
 Here’s what the project is aiming for:
 
 - Match Moods to Movies: We’ve linked common emotions (like joy, sadness, fear, etc.) to movie genres, based on thousands of reviews from TMDB. This helps the app suggest films that align with your mood without without needing to scroll endlessly through lists.
