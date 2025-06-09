@@ -56,9 +56,10 @@ services:
       - movie_network
 
   nginx:
-    image: nginx:latest
+    image: nginx:alpine
     ports:
-      - "8081:80"
+      - "8083:80"
+      - "[::]:8081:80"
     volumes:
       - ./web/html:/usr/share/nginx/html
       - ./output:/output
