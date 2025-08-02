@@ -64,7 +64,7 @@ The app is built in Python and uses the TMDB API. It’s meant to be easy to use
 1. Clone the repository 
    ```bash
    git clone https://github.com/Marzerp/movie-explorer.git
-   cd movie-explorer
+   cd movie_explorer
    ```
 2. Add your TMDB API key
    - Create a .env file (use .env_example as reference) in the proyect root and add:
