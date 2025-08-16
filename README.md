@@ -11,7 +11,7 @@ Movie Explorer is a Python-based app that recommends movies based on how you're 
 
 ## Author
 
-This project was created by Araceli Romero, a student of Information and Communication Technologies (TICs) at [UNAM](https://www.unam.mx/), Mexico.
+This project was created by Araceli Romero, a student of Information technologies in science(TICs) at [UNAM](https://www.unam.mx/), Mexico.
 
 Movie Explorer was developed as part of the Distributed Computing course (Class of 2025), combining interests in tech, user experience, and media.
 
